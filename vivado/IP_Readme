@@ -1,0 +1,103 @@
+# Custom AXI4-Stream Video Cropper IP
+
+## Overview
+
+This directory documents the custom AXI4-Stream video cropper developed as part of the FPGA-Based Video Cropping and Scaling Pipeline.
+
+The cropper is a custom Verilog RTL module designed to extract a centered 1280×720 region from a 1920×1080 AXI4-Stream video input.
+
+## Function
+
+```text
+1920×1080 AXI4-Stream Input
+            │
+            ▼
+   Custom Video Cropper
+            │
+            ▼
+1280×720 AXI4-Stream Output
+Key Features
+Custom RTL implemented in Verilog HDL
+AXI4-Stream video input and output
+Centered 1280×720 crop from 1920×1080 input
+Buffer-free streaming operation
+Maintains AXI4-Stream handshake behavior
+Generates output frame and line boundaries using TUSER and TLAST
+Preserves pixel-stream ordering during cropping
+Interface
+Signal	Description
+aclk	AXI4-Stream clock
+aresetn	Active-low reset
+s_axis_tdata	Input pixel data
+s_axis_tvalid	Input data valid
+s_axis_tready	Input ready
+s_axis_tuser	Input frame-start indication
+s_axis_tlast	Input line-end indication
+m_axis_tdata	Cropped pixel data
+m_axis_tvalid	Output data valid
+m_axis_tready	Output ready
+m_axis_tuser	Output frame-start indication
+m_axis_tlast	Output line-end indication
+Cropping Operation
+
+The input video resolution is:
+
+Input: 1920×1080
+Output: 1280×720
+
+The crop window is centered within the input frame.
+
+        1920 pixels
+┌───────────────────────────────┐
+│                               │
+│      ┌─────────────────┐      │
+│      │                 │      │
+│      │    1280×720     │      │
+│      │   Crop Region   │      │
+│      │                 │      │
+│      └─────────────────┘      │
+│                               │
+└───────────────────────────────┘
+          1080 lines
+AXI4-Stream Handling
+
+The cropper monitors the incoming pixel stream and forwards only pixels belonging to the configured crop window.
+
+The output stream maintains the required AXI4-Stream video signaling, including:
+
+TVALID
+TREADY
+TDATA
+TUSER
+TLAST
+
+TUSER is regenerated for the beginning of the cropped output frame, while TLAST identifies the end of each output video line.
+
+Verification
+
+The cropper was verified using a Verilog simulation testbench.
+
+Verification focused on:
+
+Crop-window correctness
+Pixel pass-through behavior
+Output frame boundaries
+TUSER alignment
+TLAST alignment
+AXI4-Stream handshake behavior
+Waveform-level timing analysis
+Integration
+
+The custom cropper was integrated into the Zybo Z7-10 video pipeline and connected with AXI VDMA for DDR frame buffering.
+
+The cropped 1280×720 frames were subsequently processed by the VPSS Scaler Only subsystem for conversion back to 1920×1080 before HDMI display.
+
+Source
+
+The main RTL implementation is located in:
+
+../../rtl/axi4s_video_cropper.v
+
+The corresponding simulation testbench is located in:
+
+../../rtl/axi4s_video_cropper_tb.v
