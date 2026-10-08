@@ -44,7 +44,7 @@ HDMI Output
 
 - AMD/Xilinx Vivado
 - Vitis
-- Verilog/SystemVerilog
+- Verilog
 - AXI4-Stream
 - AXI VDMA
 - VPSS
